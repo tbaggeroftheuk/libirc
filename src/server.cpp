@@ -32,8 +32,16 @@ namespace irc::server {
     Server::Server() : mImpl(std::make_unique<Impl>()) {}
     Server::~Server() = default;
 
-    std::string Server::GetLastError() {
+    std::string Server::GetLastError() const {
+        std::lock_guard<std::mutex> lock(mErrorMessageMutex);
+
         return mLastError;
+    }
+
+    void Server::SetError(const std::string& error_message) {
+        std::lock_guard<std::mutex> lock(mErrorMessageMutex);
+
+        mLastError = error_message;
     }
 
     bool Server::BindAddress(const std::string& address, int port) {
