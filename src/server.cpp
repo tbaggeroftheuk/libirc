@@ -1,7 +1,11 @@
+#include <thread>
+#include <memory>
+
 #include <asio.hpp>
 
 #include "libirc/server.hpp"
 #include "libirc/auth.hpp"
+#include "libirc/logging.hpp"
 
 namespace irc::server {
     class Server::Impl {
@@ -10,9 +14,28 @@ namespace irc::server {
             asio::ip::tcp::acceptor acceptor;
             
             std::shared_ptr<irc::auth::Authenticator> authenticator;
+            std::shared_ptr<irc::logging::ILogger> mLogger;
+
+            std::thread mThread;
 
             Impl() : acceptor(context) {
 
+            }
+
+            void Start() {
+                Accept();
+
+                mThread = std::thread([this]() {
+                    context.run();
+                });
+            }
+
+            void Stop() {
+                context.stop();
+
+                if (mThread.joinable()) {
+                    mThread.join();
+                }
             }
 
             void Accept() {
@@ -30,6 +53,11 @@ namespace irc::server {
     };
 
     Server::Server() : mImpl(std::make_unique<Impl>()) {}
+
+    Server::Server(std::shared_ptr<irc::logging::ILogger> logger) : mImpl(std::make_unique<Impl>()) {
+        mImpl->mLogger = logger;
+    }
+
     Server::~Server() = default;
 
     std::string Server::GetLastError() const {
@@ -53,14 +81,21 @@ namespace irc::server {
             mImpl->acceptor.open(endpoint.protocol());
             mImpl->acceptor.bind(endpoint);
             mImpl->acceptor.listen();
-
-            mImpl->Accept();
-
             return true;
         } catch (const std::exception& e) {
             mLastError = e.what();
             return false;
         }
+    }
+
+    bool Server::Start() {
+        // If already running, reject and return false
+        if (mIsRunning) {
+            SetError("Error: server is already running");
+            return false;
+        }
+
+        return true;
     }
 
     void Server::SetAuthenticator(std::shared_ptr<irc::auth::Authenticator> auth) {

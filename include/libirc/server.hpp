@@ -3,13 +3,16 @@
 #include <string>
 #include <memory>
 #include <atomic>
+#include <mutex>
 
 #include "libirc/auth.hpp"
+#include "libirc/logging.hpp"
 
 namespace irc::server {
     class Server {
         public:
             Server();
+            Server(std::shared_ptr<irc::logging::ILogger> logger);
             
             /**
              * @brief Destroys the server.
