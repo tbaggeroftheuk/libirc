@@ -4,7 +4,8 @@ project(libirc)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-file(GLOB SRC_FILES
+file(GLOB_RECURSE SRC_FILES
+    CONFIGURE_DEPENDS
     "src/*.cpp"
 )
 

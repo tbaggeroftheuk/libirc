@@ -30,9 +30,11 @@ std::string GetTimestamp() {
 }
 
 namespace irc::logging {
+    std::mutex ConsoleLogger::mMutex;
+
     void ConsoleLogger::LogImpl(LogLevel level, const std::string& message) {
         std::ostringstream ss;
-        ss << GetTimestamp() << "[" << LogLevel2String(level) << "] " << message << '\n';
+        ss << "[" << GetTimestamp() << "] " << "[" << LogLevel2String(level) << "] " << message << '\n';
 
         std::lock_guard<std::mutex> lock(mMutex);
 

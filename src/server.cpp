@@ -8,6 +8,8 @@
 #include "libirc/auth.hpp"
 #include "libirc/logging.hpp"
 
+#include "server/server_session.hpp"
+
 namespace irc::server {
     class Server::Impl {
         public:
@@ -44,7 +46,13 @@ namespace irc::server {
                 acceptor.async_accept(*socket,
                     [this, socket](std::error_code ec) {
                         if (!ec) {
-                            
+                            auto session = std::make_shared<irc::server::impl::ServerSession>(
+                                std::move(*socket),
+                                mLogger,
+                                authenticator
+                            );
+
+                            session->Start();
                         }
 
                         Accept();
