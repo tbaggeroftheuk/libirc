@@ -18,6 +18,8 @@ target_include_directories(libirc
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 find_package(Threads REQUIRED)

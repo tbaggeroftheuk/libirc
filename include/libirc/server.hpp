@@ -11,7 +11,14 @@
 namespace irc::server {
     class Server {
         public:
+            /**
+             * @brief Creates a server instance with default logging (irc::logging::ConsoleLogger)
+             */
             Server();
+
+            /**
+             * @brief Creates a server instance using a logger you've specified
+             */
             Server(std::shared_ptr<irc::logging::ILogger> logger);
             
             /**
@@ -51,7 +58,7 @@ namespace irc::server {
             /**
              * @brief Starts the server and blocks until it stops.
              *
-             * Convenience wrapper around @ref Start and @ref Wait.
+             * Convenience wrapper around @ref Start() and @ref Wait().
              */
             bool Run();
 
@@ -78,8 +85,10 @@ namespace irc::server {
              * @brief Waits for the server thread to exit.
              *
              * This function blocks until the server has been stopped.
+             * 
+             * @return Returns false when a fatal error happens
              */
-            void Wait();
+            bool Wait();
 
             /**
              * @brief A function to check whether the server is on
