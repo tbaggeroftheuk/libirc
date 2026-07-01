@@ -9,7 +9,7 @@ namespace irc::server::impl {
         asio::ip::tcp::socket socket,
         std::shared_ptr<irc::logging::ILogger> logger,
         std::shared_ptr<irc::auth::Authenticator> authenticator
-    ) : mSocket(std::move(socket)), mLogger(logger), mAuthenticator(authenticator) {}
+    ) : mSocket(std::move(socket)), mLogger(logger), mAuthenticator(authenticator){}
 
     void ServerSession::Start() {
         Read();
@@ -61,12 +61,7 @@ namespace irc::server::impl {
     void ServerSession::HandleMessage(
         const std::string& message
     ) {
-        // TODO have something like below
-        // irc::IRCMessage msg = irc::parser::Parse(message);
-        //
-        // switch(msg.Command()) {
-        //     case Command::Nick:
-        // };
+
 
         mLogger->Log(
             irc::logging::LogLevel::Info,

@@ -9,7 +9,11 @@ namespace irc {
         return mPrefix;
     }
 
-    const std::vector<std::string>& IRCMessage::Params() const {
-        return mParameters;
+    const std::string& IRCMessage::Param(size_t index) const {
+        return mParameters[index];
+    }
+
+    size_t IRCMessage::ParamCount() const noexcept {
+        return mParameters.size();
     }
 }

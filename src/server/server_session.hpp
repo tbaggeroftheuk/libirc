@@ -6,8 +6,12 @@
 #include <system_error>
 #include <asio.hpp>
 
+// Public api stuff
 #include "libirc/logging.hpp"
 #include "libirc/auth.hpp"
+
+// private stuff
+#include "protocol/parser.hpp"
 
 namespace irc::server::impl {
     // Session for the client
@@ -33,6 +37,7 @@ namespace irc::server::impl {
             asio::ip::tcp::socket mSocket;
             asio::streambuf mBuffer;
 
+            irc::impl::protocol::IRCParser mParser;
             std::shared_ptr<irc::logging::ILogger> mLogger;
             std::shared_ptr<irc::auth::Authenticator> mAuthenticator;
     };
