@@ -25,9 +25,7 @@ namespace irc::server::impl {
             void Read();
 
             // TODO Impliment this
-            void Send(const std::string& message) {
-                
-            }
+            void Send(const std::string& message) {}
 
             void HandleRead(std::error_code ec, std::size_t bytes);
             void HandleMessage(const std::string& message);

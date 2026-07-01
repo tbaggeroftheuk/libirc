@@ -39,16 +39,20 @@ namespace irc::server {
              * @brief Bind the server to an address and port
              * @param address An Ipv4 or Ipv6 address as a string, eg 127.0.0.0
              * @param port The port to bind to
+             * @param reuse_address Allows the server to bind to a recently used address/port combination
              * @return Returns false if an error (Use @ref GetLastError to see why it failed)
             */
-            bool BindAddress(const std::string& address, const int port = 6667);
+            bool BindAddress(const std::string& address, const int port = 6667, bool reuse_address = false);
 
             /**
              * @brief Sets the authenticator.
              *
-             * The provided authenticator should derive from
-             * @ref irc::auth::Authenticator.
+             * @warning You can't set an authenticator after starting the server!
              * 
+             * You must stop the server using Stop() and then set the authenticator
+             * 
+             * @note The provided authenticator should derive from
+             * @ref irc::auth::Authenticator.
              * 
              * @param auth Shared authenticator instance. The server retains a reference for its lifetime or until a new authenticator is set.
              * See @ref auth.hpp for the interface definition.

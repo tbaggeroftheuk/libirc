@@ -68,7 +68,9 @@ namespace irc::server {
         mImpl->mLogger = std::move(logger);
     }
 
-    Server::~Server() = default;
+    Server::~Server() {
+        mImpl->Stop();
+    };
 
     std::string Server::GetLastError() const {
         std::lock_guard<std::mutex> lock(mErrorMessageMutex);
@@ -86,13 +88,16 @@ namespace irc::server {
         return mIsRunning.load();
     }
 
-    bool Server::BindAddress(const std::string& address, int port) {
+    bool Server::BindAddress(const std::string& address, int port, bool reuse_address) {
         try {
             auto ip = asio::ip::make_address(address);
 
             asio::ip::tcp::endpoint endpoint(ip, port);
 
             mImpl->acceptor.open(endpoint.protocol());
+
+            mImpl->acceptor.set_option(asio::socket_base::reuse_address(reuse_address));
+
             mImpl->acceptor.bind(endpoint);
             mImpl->acceptor.listen();
 
@@ -115,9 +120,9 @@ namespace irc::server {
 
         // Start the server
         mImpl->Start();
-
         mIsRunning.store(true);
 
+        mImpl->mLogger->Log(irc::logging::LogLevel::Info, "[Server] Started server");
         return true;
     }
 
@@ -144,9 +149,9 @@ namespace irc::server {
 
         // Stop the server listening
         mImpl->Stop();
-
         mIsRunning.store(false);
 
+        mImpl->mLogger->Log(irc::logging::LogLevel::Info, "[Server] Server stopped");
         return true;
     }
 
@@ -163,6 +168,12 @@ namespace irc::server {
     }
 
     void Server::SetAuthenticator(std::shared_ptr<irc::auth::Authenticator> auth) {
+        // If the server is already running, reject 
+        if (mIsRunning.load()) {
+            mImpl->mLogger->Log(irc::logging::LogLevel::Error, "[Server] Can't set authenticator while the server is running!");
+            return;
+        }
+
         mImpl->authenticator = std::move(auth);
     }
 }

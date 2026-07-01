@@ -5,8 +5,6 @@
 #include <utility>
 #include <fmt/format.h>
 
-#include <iostream>
-
 namespace irc::logging {
     enum class LogLevel {
         Info,
@@ -33,16 +31,10 @@ namespace irc::logging {
         public:
             virtual ~ILogger() = default;
 
-            /*template<typename... Args>
+            template<typename... Args>
             void Log(LogLevel level, fmt::format_string<Args...> format, Args&&... args) {
                 LogImpl(level, fmt::format(format, std::forward<Args>(args)...));
-            } */
-template<typename... Args>
-void Log(LogLevel level, fmt::format_string<Args...> format, Args&&... args) {
-    auto msg = fmt::format(format, std::forward<Args>(args)...);
-    std::cout << "DEBUG: " << msg << std::endl;
-    LogImpl(level, msg);
-}
+            }
 
         protected:
             virtual void LogImpl(LogLevel level, const std::string& message) = 0;

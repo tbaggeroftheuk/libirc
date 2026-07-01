@@ -66,14 +66,12 @@ namespace irc::server::impl {
         //
         // switch(msg.Command()) {
         //     case Command::Nick:
-        // }
-
-        std::string copy = message;
+        // };
 
         mLogger->Log(
             irc::logging::LogLevel::Info,
             "Received: {}",
-            copy
+            message
         );
     }
 }
